@@ -1,26 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create New Post</title>
-</head>
-<body>
+@extends('layouts.app')
+
+@section('content')
     <h1>Create a New Post</h1>
 
     <form method="POST" action="/posts">
         @csrf
-        <div>
-            <label for="title">Title:</label><br>
-            <input type="text" id="title" name="title">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title:</label>
+            <input type="text" id="title" name="title" class="form-control">
         </div>
-        <br>
-        <div>
-            <label for="body">Content:</label><br>
-            <textarea id="body" name="body"></textarea>
+        <div class="mb-3">
+            <label for="body" class="form-label">Content:</label>
+            <textarea id="body" name="body" class="form-control" rows="5"></textarea>
         </div>
-        <br>
         <div>
-            <button type="submit">Save Post</button>
+            <button type="submit" class="btn btn-primary">Save Post</button>
         </div>
     </form>
-</body>
-</html>
+@endsection

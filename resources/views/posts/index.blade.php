@@ -1,24 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Blog</title>
-</head>
-<body>
-    <h1>All Posts</h1>
+@extends('layouts.app')
 
-    @foreach ($posts as $post)
-    <div>
-        <h2>{{ $post->title }}</h2>
-        <p>{{ $post->body }}</p>
-        <a href="/posts/{{ $post->id }}/edit">Edit</a>
-
-        <form method="POST" action="/posts/{{ $post->id }}" style="display:inline;">
-            @csrf
-            @method('DELETE')
-            <button type="submit">Delete</button>
-        </form>
+@section('content')
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>All Posts</h1>
+        <a href="/posts/create" class="btn btn-primary">Create New Post</a>
     </div>
-    <hr>
-    @endforeach
-</body>
-</html>
+
+    @if (count($posts) > 0)
+        @foreach ($posts as $post)
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="card-title">{{ $post->title }}</h2>
+                    <p class="card-text">{{ $post->body }}</p>
+                    <a href="/posts/{{ $post->id }}/edit" class="btn btn-secondary">Edit</a>
+                    <form method="POST" action="/posts/{{ $post->id }}" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        @endforeach
+    @else
+        <p>No posts found.</p>
+    @endif
+@endsection
