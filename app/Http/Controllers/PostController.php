@@ -9,7 +9,7 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::latest()->with('user')->get();
         return view('posts.index', ['posts' => $posts]);
     }
     public function create()
@@ -19,19 +19,15 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Формоос ирсэн мэдээллийг шалгах
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|max:255',
             'body' => 'required',
         ]);
 
-        // 2. Шинэ Post үүсгээд, мэдээллийн санд хадгалах
-        Post::create([
-            'title' => $request->title,
-            'body' => $request->body,
-        ]);
+        $validated['user_id'] = auth()->id();
 
-        // 3. Хэрэглэгчийг бүх постын жагсаалт руу буцаах
+        Post::create($validated);
+
         return redirect('/posts');
     }
     public function edit(Post $post)
@@ -40,23 +36,25 @@ class PostController extends Controller
     }
     public function update(Request $request, Post $post)
     {
-        // 1. Формоос ирсэн шинэ мэдээллийг шалгах
-        $request->validate([
+        if ($post->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
             'title' => 'required|max:255',
             'body' => 'required',
         ]);
 
-        // 2. Route-оос олдсон постын мэдээллийг шинэчлэх
-        $post->update([
-            'title' => $request->title,
-            'body' => $request->body,
-        ]);
+        $post->update($validated);
 
-        // 3. Хэрэглэгчийг бүх постын жагсаалт руу буцаах
         return redirect('/posts');
     }
     public function destroy(Post $post)
     {
+        if ($post->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         // 1. Route-оос олсон постыг устгах
         $post->delete();
 
